@@ -1,0 +1,24 @@
+services:
+  xtts2-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
+    ports:
+      - "8566:8501"
+    environment:
+      # avoids interactive ToS prompt
+      - COQUI_TOS_AGREED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    volumes:
+      # persist downloaded models & your target voice clips
+      - ./models:/root/.local/share/tts
+      - ./targets:/app/targets
+      # mount Python files for live code updates
+      - ./app2.py:/app/app2.py
+      - ./languages.json:/app/languages.json
+      # mount latent speaker folder to persist generated embeddings
+      - ./latent_speaker_folder:/app/latent_speaker_folder
